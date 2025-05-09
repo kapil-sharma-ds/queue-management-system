@@ -4,12 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Scout\Searchable;
 
 class Staff extends Model
 {
     use HasFactory;
-    use Searchable;
 
     protected $fillable = [
         'name',
@@ -23,21 +21,6 @@ class Staff extends Model
     protected $hidden = [
         'password',
     ];
-
-    /**
-     * Used for Laravel Scout based searching.
-     * This method is used to convert the model instance into an array.
-     * Get the indexable data array for the model.
-     *
-     * @return array<string, mixed>
-     */
-    public function toSearchableArray(): array
-    {
-        return [
-            'name' => $this->name,         // Index the 'name' attribute
-            'email' => $this->email,       // Index the 'email' attribute
-        ];
-    }
 
     public function searchableFields(): array
     {
