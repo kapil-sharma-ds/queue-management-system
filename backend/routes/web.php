@@ -7,10 +7,10 @@ use App\Jobs\TestJob;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/test-job', function () {
-    dispatch(new TestJob);
-    return 'Dispatched';
-});
+// Route::get('/test-job', function () {
+//     dispatch(new TestJob);
+//     return 'Dispatched';
+// });
 
 Route::get('/staff/search', [StaffSearchController::class, 'showSearchForm']);
 Route::post('/staff/search', [StaffSearchController::class, 'search']);
@@ -29,6 +29,8 @@ Route::middleware('auth')->group(function () {
     })->name('datatables');
     Route::resource('services-offered', ServiceController::class);
     Route::get('counters', [CounterController::class, 'index'])->name('counter.index');
+
+    Route::get('staff/search', [StaffSearchController::class, 'index'])->name('staff.search.form');
 });
 
 require __DIR__.'/settings.php';

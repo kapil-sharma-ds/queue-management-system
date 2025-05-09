@@ -1,5 +1,5 @@
 <template>
-    <Head title="Services Offered" />
+    <Head title="Counters" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
@@ -45,6 +45,6 @@ const headers = [
 ]
 
 // onMounted(() => {
-//   console.log('Service:', props.Service)
+//   console.log('Service:', props.counters)
 // })
 </script>
