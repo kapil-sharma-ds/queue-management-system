@@ -4,10 +4,9 @@
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
             <div class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min overflow-x-auto">
-
                 <!-- Search Box aligned right with inline label -->
-                <div class="flex justify-end p-8">
-                    <div class="flex items-center gap-2 w-64">
+                <div class="flex justify-end p-4 max-w-full">
+                    <div class="flex items-center gap-2 w-full max-w-xs">
                         <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Search:</label>
                         <input
                             type="text"
@@ -18,7 +17,6 @@
                     </div>
                 </div>
 
-                <!-- Data Table -->
                 <EasyDataTable
                     :headers="headers"
                     :items="staff"
