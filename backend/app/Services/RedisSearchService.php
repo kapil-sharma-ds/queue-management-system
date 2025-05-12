@@ -59,7 +59,7 @@ class RedisSearchService
     {
         // Fetch all records from the DB
         // and cache them in Redis
-        $allRecords = ($this->model)::all();
+        $allRecords = ($this->model)::orderBy('id')->get();
 
         foreach ($allRecords as $record) {
             $data = ['id' => $record->id];
@@ -68,13 +68,21 @@ class RedisSearchService
                 $data[$field] = $record->{$field};
             }
 
-            Redis::hmset("{$this->key}:{$record->id}", $data);
+            $key = "{$this->key}:{$record->id}";
+
+            // Store hash
+            Redis::hmset($key, $data);
+
+            // Add to sorted set for ordering
+            Redis::zadd("{$this->key}:sorted", $record->id, $key);
         }
     }
 
     public function getItems()
     {
-        foreach ($this->getRedisKeys() as $key) {
+        $sortedKeys = Redis::zrange("{$this->key}:sorted", 0, -1);
+
+        foreach ($sortedKeys as $key) {
             $record = Redis::hgetall($key);
 
             if (empty($this->query)) {
@@ -82,8 +90,8 @@ class RedisSearchService
             } else {
                 foreach ($this->searchableFields as $field) {
                     if (
-                        isset($record[$field])
-                        && str_contains(strtolower($record[$field]), strtolower($this->query))
+                        isset($record[$field]) &&
+                        str_contains(strtolower($record[$field]), strtolower($this->query))
                     ) {
                         $this->matchedRecords[] = $record;
                         break;

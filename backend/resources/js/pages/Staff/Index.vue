@@ -23,7 +23,15 @@
                     :search-value="searchValue"
                     alternating
                     border-cell
-                />
+                >
+                    <template #item-actions="{ id }">
+                        <div class="flex gap-2">
+                            <button @click="viewItem(id)" class="text-blue-500 hover:underline">View</button>
+                            <button @click="editItem(id)" class="text-yellow-500 hover:underline">Edit</button>
+                            <button @click="deleteItem(id)" class="text-red-500 hover:underline">Delete</button>
+                        </div>
+                    </template>
+                </EasyDataTable>
             </div>
         </div>
     </AppLayout>
@@ -41,8 +49,6 @@ const props = defineProps({
     staff: Array
 })
 
-const searchValue = ref('');
-
 const breadcrumbs = [
     {
         title: 'Staff',
@@ -55,8 +61,23 @@ const headers = [
   { text: 'Id', value: 'id', sortable: true },
   { text: 'Name', value: 'name' },
   { text: 'Email', value: 'email' },
+  { text: 'Actions', value: 'actions' },
   // Add more fields as needed
 ]
+
+const searchValue = ref('');
+
+const viewItem = (item) => {
+  console.log('View:', item)
+}
+
+const editItem = (item) => {
+  console.log('Edit:', item)
+}
+
+const deleteItem = (item) => {
+  console.log('Delete:', item)
+}
 
 // onMounted(() => {
 //   console.log('Service:', props.staff)
