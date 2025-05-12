@@ -21,11 +21,13 @@ class StaffSearchController extends Controller
         // records are stored with a prefix 'staff:*'
         $keyPattern = 'staff';
 
+        $staffModel = (new Staff);
+
         $redisSearchService = app(RedisSearchService::class, [
-            'model' => new Staff,
+            'model' => $staffModel,
             'keyPattern' => $keyPattern,
             'query' => $query,
-            'searchableFields' => ['name', 'email'],
+            'searchableFields' => $staffModel->searchableFields(),
         ]);
 
         // Fetch all records from Redis
