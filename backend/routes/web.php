@@ -28,7 +28,6 @@ Route::middleware('auth')->group(function () {
     Route::get('counters', [CounterController::class, 'index'])->name('counter.index');
 
     Route::prefix('staff')->group(function () {
-        Route::get('modal', [StaffSearchController::class, 'modal'])->name('staff.modal');
         Route::get('search', [StaffSearchController::class, 'index'])->name('staff.index');
         // Route::post('search', [StaffSearchController::class, 'search'])->name('staff.search.submit');
         Route::get('/view/{id}', [StaffSearchController::class, 'show'])->name('staff.show');

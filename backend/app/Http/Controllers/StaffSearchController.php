@@ -13,12 +13,6 @@ use Illuminate\Support\Facades\Log;
 
 class StaffSearchController extends Controller
 {
-
-    public function modal(Request $request)
-    {
-        return inertia('Staff/Modal');
-    }
-
     public function index(Request $request)
     {
         $query = strtolower($request->input('query'));
@@ -100,7 +94,7 @@ class StaffSearchController extends Controller
     {
         $staff = Staff::findOrFail($request->id);
         Log::info('Deleted Staff Id: ', [$staff->id]);
-        // $staff->delete();
+        $staff->delete();
 
         return response()->json(['success' => true, 'message' => 'Staff deleted successfully.']);
     }
