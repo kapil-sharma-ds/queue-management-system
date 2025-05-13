@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Redis;
 
 class RedisSearchService
 {
-    public $key;
+    public $keyPattern;
     private $matchedRecords = [];
 
     /**
@@ -16,13 +16,12 @@ class RedisSearchService
      */
     public function __construct(
         public Model $model,
-        public string $keyPattern,
+        public string $key,
         public string $query = '',
         public string|array $searchableFields = 'name,email',
     )
     {
-        $this->key = $this->keyPattern;
-        $this->keyPattern = $this->keyPattern . ':*';
+        $this->keyPattern = $key . ':*';
         $this->searchableFields = is_array($searchableFields)
             ? $searchableFields
             : array_map('trim', explode(',', $searchableFields));
@@ -133,5 +132,16 @@ class RedisSearchService
 
         Redis::del($key);
         Redis::zrem("{$this->key}:sorted", $key);
+    }
+
+    public function clearCache()
+    {
+        Log::info('[RedisSearchService]: Clearing Staff Cache');
+
+        $keys = $this->getRedisKeys();
+
+        if (!empty($keys)) {
+            Redis::del(...$keys); // Delete all matching keys
+        }
     }
 }

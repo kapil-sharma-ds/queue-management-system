@@ -22,13 +22,13 @@ class StaffSearchController extends Controller
         // Key Pattern to search in Redis
         // This pattern assumes that all staff
         // records are stored with a prefix 'staff:*'
-        $keyPattern = 'staff';
+        $key = 'staff';
 
         $staffModel = (new Staff);
 
         $redisSearchService = app(RedisSearchService::class, [
             'model' => $staffModel,
-            'keyPattern' => $keyPattern,
+            'key' => $key,
             'query' => $query,
             'searchableFields' => $staffModel->searchableFields(),
         ]);
@@ -97,6 +97,24 @@ class StaffSearchController extends Controller
         $staff->delete();
 
         return response()->json(['success' => true, 'message' => 'Staff deleted successfully.']);
+    }
+
+    public function clearStaffCache()
+    {
+        $key = 'staff';
+
+        $staffModel = (new Staff);
+
+        Log::info('[StaffSearchController]: Clearing Staff Cache');
+
+        $redisSearchService = app(RedisSearchService::class, [
+            'model' => $staffModel,
+            'key' => $key,
+        ]);
+
+        $redisSearchService->clearCache();
+
+        return response()->json(['message' => 'Staff cache cleared successfully.']);
     }
 
     public function showSearchForm(Request $request)

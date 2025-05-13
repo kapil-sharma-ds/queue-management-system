@@ -16,11 +16,11 @@
     </template>
     <template #footer>
       <div class="flex justify-between">
-        <fwb-button @click="closeModal" color="alternative">
-          Cancel
+        <fwb-button v-if="props.cancelButton" @click="closeModal" :color="props.cancelButtonColor">
+          {{ props.cancelButtonText }}
         </fwb-button>
-        <fwb-button @click="confirmAction" color="green">
-          Confirm
+        <fwb-button v-if="props.confirmButton" @click="confirmAction" :color="props.confirmButtonColor">
+          {{ props.confirmButtonText }}
         </fwb-button>
       </div>
     </template>
@@ -34,6 +34,30 @@ import { FwbModal, FwbButton } from 'flowbite-vue'
 const props = defineProps({
   show: Boolean,
   title: String,
+  cancelButton: {
+    type: Boolean,
+    default: true
+  },
+  confirmButton: {
+    type: Boolean,
+    default: true
+  },
+  cancelButtonText: {
+    type: String,
+    default: 'Cancel'
+  },
+  confirmButtonText: {
+    type: String,
+    default: 'Confirm'
+  },
+  cancelButtonColor: {
+    type: String,
+    default: 'alternative'
+  },
+  confirmButtonColor: {
+    type: String,
+    default: 'red'
+  },
   message: String
 })
 

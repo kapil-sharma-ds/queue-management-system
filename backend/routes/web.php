@@ -34,6 +34,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/edit', [StaffSearchController::class, 'edit'])->name('staff.edit');
         Route::put('/{id}', [StaffSearchController::class, 'update'])->name('staff.update');
         Route::delete('/{id}', [StaffSearchController::class, 'destroy'])->name('staff.destroy');
+
+        Route::post('clear-cache', [StaffSearchController::class, 'clearStaffCache'])->name('staff.clearStaffCache');
     });
 });
 
