@@ -12,9 +12,6 @@ use Inertia\Inertia;
 //     return 'Dispatched';
 // });
 
-Route::get('/staff/search', [StaffSearchController::class, 'showSearchForm']);
-Route::post('/staff/search', [StaffSearchController::class, 'search']);
-
 Route::get('/', function () {
     return Inertia::render('Welcome');
 })->name('home');
@@ -30,7 +27,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('services-offered', ServiceController::class);
     Route::get('counters', [CounterController::class, 'index'])->name('counter.index');
 
-    Route::get('staff/search', [StaffSearchController::class, 'index'])->name('staff.search.form');
+    Route::prefix('staff')->group(function () {
+        Route::get('modal', [StaffSearchController::class, 'modal'])->name('staff.modal');
+        Route::get('search', [StaffSearchController::class, 'index'])->name('staff.index');
+        // Route::post('search', [StaffSearchController::class, 'search'])->name('staff.search.submit');
+        Route::get('/view/{id}', [StaffSearchController::class, 'show'])->name('staff.show');
+        Route::get('/{id}/edit', [StaffSearchController::class, 'edit'])->name('staff.edit');
+        Route::put('/{id}', [StaffSearchController::class, 'update'])->name('staff.update');
+        Route::delete('/{id}', [StaffSearchController::class, 'destroy'])->name('staff.destroy');
+    });
 });
 
 require __DIR__.'/settings.php';

@@ -24,6 +24,7 @@ class StaffSeeder extends Seeder
             [
                 'name' => 'John Doe',
                 'email' => 'john@example.com',
+                'bio' => $faker->paragraph(),
                 'password' => Hash::make('password'),
                 'role_id' => 1,
                 'service_id' => 1,
@@ -32,6 +33,7 @@ class StaffSeeder extends Seeder
             [
                 'name' => 'Jane Smith',
                 'email' => 'jane@example.com',
+                'bio' => $faker->paragraph(),
                 'password' => Hash::make('password'),
                 'role_id' => 2,
                 'service_id' => 2,

@@ -17,7 +17,7 @@ class RedisSearchService
     public function __construct(
         public Model $model,
         public string $keyPattern,
-        public string $query,
+        public string $query = '',
         public string|array $searchableFields = 'name,email',
     )
     {
@@ -99,5 +99,39 @@ class RedisSearchService
                 }
             }
         }
+    }
+
+    public function updateItem(Model $record): void
+    {
+        $key = "{$this->key}:{$record->id}";
+
+        $data = ['id' => $record->id];
+        foreach ($this->searchableFields as $field) {
+            $data[$field] = $record->{$field};
+        }
+
+        Log::info('[RedisSearchService] Updating Redis Cache', [
+            'key' => $key,
+            'data' => $data,
+        ]);
+
+        // Store hash
+        Redis::hmset($key, $data);
+
+        // Add to sorted set for ordering
+        Redis::zadd("{$this->key}:sorted", $record->id, $key);
+    }
+
+    public function deleteItem(Model $record): void
+    {
+        $key = "{$this->key}:{$record->id}";
+
+        Log::info('[RedisSearchService] Deleting Redis Cache', [
+            'key' => $key,
+            'id' => $record->id,
+        ]);
+
+        Redis::del($key);
+        Redis::zrem("{$this->key}:sorted", $key);
     }
 }

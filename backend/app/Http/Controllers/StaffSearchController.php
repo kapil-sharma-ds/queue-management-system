@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Counter;
+use App\Models\Role;
+use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redis;
 use App\Models\Staff;
@@ -10,6 +13,12 @@ use Illuminate\Support\Facades\Log;
 
 class StaffSearchController extends Controller
 {
+
+    public function modal(Request $request)
+    {
+        return inertia('Staff/Modal');
+    }
+
     public function index(Request $request)
     {
         $query = strtolower($request->input('query'));
@@ -36,6 +45,64 @@ class StaffSearchController extends Controller
         return inertia('Staff/Index', [
             'staff' => $matchedStaff,
         ]);
+    }
+
+    public function show(Request $request)
+    {
+        $staff = Staff::with([
+            'role',
+            'service',
+            'counter'
+        ])->findOrFail($request->id);
+
+        return inertia('Staff/Show', [
+            'staff' => $staff,
+        ]);
+    }
+
+    public function edit(Request $request)
+    {
+        $staff = Staff::with([
+            'service',
+            'counter',
+            'role',
+        ])->findOrFail($request->id);
+
+        $services = Service::all();
+        $counters = Counter::all();
+        $roles = Role::all();
+
+        return inertia('Staff/Edit', [
+            'staff' => $staff,
+            'services' => $services,
+            'counters' => $counters,
+            'roles' => $roles,
+        ]);
+    }
+
+    public function update(Request $request)
+    {
+        $staff = Staff::findOrFail($request->id);
+
+        $staff->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'bio' => $request->bio,
+            'service_id' => $request->service_id,
+            'counter_id' => $request->counter_id,
+            'role_id' => $request->role_id,
+        ]);
+
+        return redirect()->route('staff.index')->with('success', 'Staff updated successfully.');
+    }
+
+    public function destroy(Request $request)
+    {
+        $staff = Staff::findOrFail($request->id);
+        Log::info('Deleted Staff Id: ', [$staff->id]);
+        // $staff->delete();
+
+        return response()->json(['success' => true, 'message' => 'Staff deleted successfully.']);
     }
 
     public function showSearchForm(Request $request)

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Services\RedisSearchService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -12,6 +13,7 @@ class Staff extends Model
     protected $fillable = [
         'name',
         'email',
+        'bio',
         'password',
         'role_id',
         'service_id',
@@ -25,6 +27,27 @@ class Staff extends Model
     public function searchableFields(): array
     {
         return ['name', 'email'];
+    }
+
+    protected static function booted()
+    {
+        static::updated(function ($staff) {
+            (new RedisSearchService(
+                model: $staff,
+                keyPattern: 'staff',
+                query: '',
+                searchableFields: ['name', 'email']
+            ))->updateItem($staff);
+        });
+
+        static::deleted(function ($staff) {
+            (new RedisSearchService(
+                model: $staff,
+                keyPattern: 'staff',
+                query: '',
+                searchableFields: ['name', 'email']
+            ))->deleteItem($staff);
+        });
     }
 
     public function role()

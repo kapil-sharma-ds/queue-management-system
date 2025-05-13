@@ -23,6 +23,7 @@ class StaffFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
+            'bio' => $this->faker->paragraph(),
             'password' => Hash::make('password'), // or bcrypt()
             'role_id' => $this->faker
                 ->randomElement(

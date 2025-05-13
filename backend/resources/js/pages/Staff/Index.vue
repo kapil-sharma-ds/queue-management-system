@@ -24,25 +24,37 @@
                     alternating
                     border-cell
                 >
-                    <template #item-actions="{ id }">
+                    <template #item-actions="{ id, name }">
                         <div class="flex gap-2">
                             <button @click="viewItem(id)" class="text-blue-500 hover:underline">View</button>
                             <button @click="editItem(id)" class="text-yellow-500 hover:underline">Edit</button>
-                            <button @click="deleteItem(id)" class="text-red-500 hover:underline">Delete</button>
+                            <button @click="confirmDelete(id, name)" class="text-red-500 hover:underline">Delete</button>
                         </div>
                     </template>
                 </EasyDataTable>
             </div>
         </div>
     </AppLayout>
+
+    <!-- Reusable Modal -->
+    <Modal
+        v-if="selectedStaff"
+        :show="showModal"
+        :title="`Delete Staff`"
+        :message="`Are you sure you want to delete ${selectedStaff.name}?`"
+        @close="showModal = false"
+        @confirm="handleConfirm"
+    />
 </template>
 
 <script setup>
 import 'vue3-easy-data-table/dist/style.css'
+import axios from 'axios';
 import { defineProps, ref, onMounted } from 'vue'
 import EasyDataTable from 'vue3-easy-data-table'
-import { Head } from '@inertiajs/vue3'
+import { Head, router } from '@inertiajs/vue3'
 import AppLayout from '@/layouts/AppLayout.vue';
+import Modal from '@/components/ui/modal/Modal.vue'
 // import { type BreadcrumbItem } from '@/types';
 
 const props = defineProps({
@@ -66,17 +78,36 @@ const headers = [
 ]
 
 const searchValue = ref('');
+const showModal = ref(false);
+const selectedStaff = ref(null);
 
-const viewItem = (item) => {
-  console.log('View:', item)
+const viewItem = (id) => {
+  router.visit(route('staff.show', id))
 }
 
-const editItem = (item) => {
-  console.log('Edit:', item)
+const editItem = (id) => {
+  router.visit(route('staff.edit', id))
 }
 
-const deleteItem = (item) => {
-  console.log('Delete:', item)
+const confirmDelete = (id, name) => {
+  selectedStaff.value = { id, name }
+  showModal.value = true
+}
+
+const handleConfirm = async () => {
+  if (selectedStaff.value) {
+    try {
+      await axios.delete(route('staff.destroy', selectedStaff.value.id))
+      router.visit(route('staff.index'), {
+        only: ['staff'],
+        preserveScroll: true,
+      })
+    } catch (error) {
+      console.error('Failed to delete staff:', error)
+    } finally {
+      showModal.value = false
+    }
+  }
 }
 
 // onMounted(() => {
