@@ -5,6 +5,7 @@ namespace App\Services;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use Illuminate\Support\Str;
 
 class RedisSearchService
 {
@@ -47,6 +48,27 @@ class RedisSearchService
         $this->getItems();
 
         return $this->matchedRecords;
+    }
+
+    public function storeItemInRedis(Model $item): void
+    {
+        $key = $this->key . ':' . $item->getKey();
+
+        // Store full record as JSON
+        Redis::hset($key, $item->toJson());
+
+        // Build a searchable display value from configured fields
+        $sortValue = Str::lower(
+            collect($this->searchableFields)
+                ->map(fn($field) => $item->{$field})
+                ->implode(' ')
+        ); // or any other sorting logic
+
+        // Add to sorted set
+        Redis::zadd($this->key . ':sorted', 0, json_encode([
+            'id' => $item->getKey(),
+            'text' => $sortValue,
+        ]));
     }
 
     public function getRedisKeys(): array
@@ -136,7 +158,7 @@ class RedisSearchService
 
     public function clearCache()
     {
-        Log::info('[RedisSearchService]: Clearing Staff Cache');
+        Log::info("[RedisSearchService]: Clearing {$this->key} Cache");
 
         $keys = $this->getRedisKeys();
 

@@ -41,6 +41,54 @@ class StaffSearchController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        $services = Service::all();
+        $counters = Counter::all();
+        $roles = Role::all();
+
+        return inertia('Staff/Create', [
+            'services' => $services,
+            'counters' => $counters,
+            'roles' => $roles,
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        dd($request->all());
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:staff,email',
+            'bio' => 'nullable|string',
+            'password' => 'required|string|min:8|confirmed',
+            'service_id' => 'required|exists:services,id',
+            'counter_id' => 'required|exists:counters,id',
+            'role_id' => 'required|exists:roles,id',
+        ]);
+
+        // $staff = Staff::create([
+        //     'name' => $request->name,
+        //     'email' => $request->email,
+        //     'bio' => $request->bio,
+        //     'password' => bcrypt($request->password),
+        //     'service_id' => $request->service_id,
+        //     'counter_id' => $request->counter_id,
+        //     'role_id' => $request->role_id,
+        // ]);
+
+        $redisSearchService = new RedisSearchService(
+            model: new Staff(),
+            key: 'staff',
+            searchableFields: ['name', 'email']
+        );
+
+        $redisSearchService->storeItemInRedis($staff);
+
+        return redirect()->route('staff.index')->with('success', 'Staff created successfully.');
+    }
+
     public function show(Request $request)
     {
         $staff = Staff::with([

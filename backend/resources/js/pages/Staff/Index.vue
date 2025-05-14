@@ -4,16 +4,29 @@
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-            <fwb-alert v-if="showSuccessAlert" type="success" closable @close="showSuccessAlert = false">
-                {{ alertMessage }}
-            </fwb-alert>
+            <div class="w-full max-w-md mx-auto">
+                <fwb-alert v-if="showSuccessAlert" type="success" closable @close="showSuccessAlert = false">
+                    {{ alertMessage }}
+                </fwb-alert>
+            </div>
             <div
                 class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min overflow-x-auto">
                 <!-- Parent Flex Container -->
                 <div class="flex justify-between items-center p-4 flex-wrap gap-4">
                     <!-- Button on the left -->
                     <div class="flex items-center gap-2">
-                        <fwb-button color="default" @click="clearStaffCache">
+                        <fwb-button
+                            color="default"
+                            outline
+                            @click="router.visit(route('staff.create'))"
+                        >
+                            Create Staff
+                        </fwb-button>
+                        <fwb-button
+                            color="red"
+                            outline
+                            @click="clearStaffCache"
+                        >
                             Clear Redis Cache
                         </fwb-button>
                     </div>

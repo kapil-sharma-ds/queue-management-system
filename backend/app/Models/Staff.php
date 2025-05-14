@@ -36,7 +36,7 @@ class Staff extends Model
         static::updated(function ($staff) {
             (new RedisSearchService(
                 model: $staff,
-                keyPattern: 'staff',
+                key: 'staff',
                 query: '',
                 searchableFields: ['name', 'email']
             ))->updateItem($staff);
@@ -45,7 +45,7 @@ class Staff extends Model
         static::deleted(function ($staff) {
             (new RedisSearchService(
                 model: $staff,
-                keyPattern: 'staff',
+                key: 'staff',
                 query: '',
                 searchableFields: ['name', 'email']
             ))->deleteItem($staff);

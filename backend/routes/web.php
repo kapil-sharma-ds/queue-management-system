@@ -28,8 +28,10 @@ Route::middleware('auth')->group(function () {
     Route::get('counters', [CounterController::class, 'index'])->name('counter.index');
 
     Route::prefix('staff')->group(function () {
-        Route::get('search', [StaffSearchController::class, 'index'])->name('staff.index');
+        Route::get('', [StaffSearchController::class, 'index'])->name('staff.index');
         // Route::post('search', [StaffSearchController::class, 'search'])->name('staff.search.submit');
+        Route::get('/create', [StaffSearchController::class, 'create'])->name('staff.create');
+        Route::post('/', [StaffSearchController::class, 'store'])->name('staff.store');
         Route::get('/view/{id}', [StaffSearchController::class, 'show'])->name('staff.show');
         Route::get('/{id}/edit', [StaffSearchController::class, 'edit'])->name('staff.edit');
         Route::put('/{id}', [StaffSearchController::class, 'update'])->name('staff.update');

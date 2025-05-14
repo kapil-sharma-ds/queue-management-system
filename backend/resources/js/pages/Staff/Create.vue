@@ -1,6 +1,6 @@
 <template>
 
-    <Head title="Edit Staff" />
+    <Head title="Create Staff" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
@@ -8,7 +8,7 @@
                 class="relative min-h-[100vh] flex-1 rounded-xl border border-sidebar-border/70 dark:border-sidebar-border md:min-h-min overflow-x-auto">
                 <div class="container mx-auto p-4">
                     <div class="bg-white rounded-xl shadow-md p-6 w-full max-w-3xl mx-auto">
-                        <h2 class="text-xl font-bold mb-6">Edit Staff</h2>
+                        <h2 class="text-xl font-bold mb-6">Create Staff</h2>
 
                         <form @submit.prevent="submitForm">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -50,6 +50,16 @@
                                     </select>
                                 </div>
 
+                                <div class="flex items-center gap-2">
+                                    <label class="w-32 font-medium">Password:</label>
+                                    <input v-model="form.password" type="password" class="input-text" />
+                                </div>
+
+                                <div class="flex items-center gap-2">
+                                    <label class="w-32 font-medium">Confirm Password:</label>
+                                    <input v-model="form.password_confirmation" type="password" class="input-text" />
+                                </div>
+
                                 <div class="flex items-start gap-2 md:col-span-2">
                                     <label class="w-32 font-medium mt-2">Bio:</label>
                                     <textarea v-model="form.bio" rows="4" class="input-text w-full">
@@ -77,7 +87,6 @@ import { router, Head } from '@inertiajs/vue3';
 import AppLayout from '@/layouts/AppLayout.vue';
 
 const props = defineProps({
-    staff: Object,
     services: Array,
     counters: Array,
     roles: Array,
@@ -89,23 +98,24 @@ const breadcrumbs = [
         href: "/staff",
     },
     {
-        title: 'Staff Details',
-        href: "/staff/${props.staff.id}",
+        title: 'Create',
+        href: "/staff/create",
     },
 ];
 
 const form = reactive({
-    name: props.staff.name,
-    email: props.staff.email,
-    bio: props.staff.bio,
-    service_id: props.staff.service_id,
-    counter_id: props.staff.counter_id,
-    role_id: props.staff.role_id,
+    name: '',
+    email: '',
+    bio: '',
+    service_id: '',
+    counter_id: '',
+    role_id: '',
+    password: '',
+    password_confirmation: '',
 })
 
 const submitForm = () => {
-    // router.put(`/staff/${props.staff.id}`, form)
-    router.put(route('staff.update', props.staff.id), form);
+    router.post(route('staff.store'), form)
 }
 </script>
 
