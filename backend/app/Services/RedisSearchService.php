@@ -54,8 +54,14 @@ class RedisSearchService
     {
         $key = $this->key . ':' . $item->getKey();
 
-        // Store full record as JSON
-        Redis::hset($key, $item->toJson());
+        // Prepare the data to be stored (fields you want to store individually)
+        $data = ['id' => $item->id];
+        foreach ($this->searchableFields as $field) {
+            $data[$field] = $item->{$field};
+        }
+
+        // Store individual fields in the Redis hash
+        Redis::hset($key, ...collect($data)->flatMap(fn($v, $k) => [$k, $v])->toArray());
 
         // Build a searchable display value from configured fields
         $sortValue = Str::lower(
@@ -69,6 +75,10 @@ class RedisSearchService
             'id' => $item->getKey(),
             'text' => $sortValue,
         ]));
+
+        Log::info('[RedisSearchController]: Created record in Redis', [
+            'data' => $data,
+        ]);
     }
 
     public function getRedisKeys(): array
@@ -92,7 +102,7 @@ class RedisSearchService
             $key = "{$this->key}:{$record->id}";
 
             // Store hash
-            Redis::hmset($key, $data);
+            Redis::hset($key, ...collect($data)->flatMap(fn($v, $k) => [$k, $v])->toArray());
 
             // Add to sorted set for ordering
             Redis::zadd("{$this->key}:sorted", $record->id, $key);
@@ -137,7 +147,7 @@ class RedisSearchService
         ]);
 
         // Store hash
-        Redis::hmset($key, $data);
+        Redis::hset($key, ...collect($data)->flatMap(fn($v, $k) => [$k, $v])->toArray());
 
         // Add to sorted set for ordering
         Redis::zadd("{$this->key}:sorted", $record->id, $key);
