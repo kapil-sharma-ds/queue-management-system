@@ -38,10 +38,14 @@
 
                 @if(count($results) > 0)
                     <ul class="space-y-4">
-                        @foreach($results as $staff)
+                        @foreach($results as $record)
                             <li class="p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                                <p class="text-lg font-medium text-gray-800">{{ $staff['name'] }}</p>
-                                <p class="text-sm text-gray-600">{{ $staff['email'] }}</p>
+                                @if(isset($record['name']))
+                                <p class="text-lg font-medium text-gray-800">{{ $record['name'] }}</p>
+                                @endif
+                                @if(isset($record['email']))
+                                <p class="text-sm text-gray-600">{{ $record['email'] }}</p>
+                                @endif
                             </li>
                         @endforeach
                     </ul>

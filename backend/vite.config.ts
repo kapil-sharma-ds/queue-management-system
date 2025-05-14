@@ -10,9 +10,9 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 5173,
         strictPort: true,
-        origin: 'http://localhost:5173', // match access origin
+        origin: 'http://192.168.11.5:5173', // match access origin
         hmr: {
-            host: 'localhost',
+            host: '192.168.11.5',
             port: 5173,
         },
         cors: {
@@ -40,6 +40,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': path.resolve(__dirname, './resources/js'),
+            '@resources': path.resolve(__dirname, './resources'),
             'ziggy-js': resolve(__dirname, 'vendor/tightenco/ziggy'),
         },
     },

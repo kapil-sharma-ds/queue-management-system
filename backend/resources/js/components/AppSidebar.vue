@@ -25,6 +25,11 @@ const mainNavItems: NavItem[] = [
         icon: HandCoins,
     },
     {
+        title: 'Staff',
+        href: '/staff',
+        icon: HandCoins,
+    },
+    {
         title: 'DataTables',
         href: '/data-tables',
         icon: HandCoins,

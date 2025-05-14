@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
+use App\Services\RedisSearchService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Staff extends Model
 {
     use HasFactory;
-    use Searchable;
+    use SoftDeletes;
 
     protected $fillable = [
         'name',
         'email',
+        'bio',
         'password',
         'role_id',
         'service_id',
@@ -24,24 +26,30 @@ class Staff extends Model
         'password',
     ];
 
-    /**
-     * Used for Laravel Scout based searching.
-     * This method is used to convert the model instance into an array.
-     * Get the indexable data array for the model.
-     *
-     * @return array<string, mixed>
-     */
-    public function toSearchableArray(): array
-    {
-        return [
-            'name' => $this->name,         // Index the 'name' attribute
-            'email' => $this->email,       // Index the 'email' attribute
-        ];
-    }
-
     public function searchableFields(): array
     {
         return ['name', 'email'];
+    }
+
+    protected static function booted()
+    {
+        static::updated(function ($staff) {
+            (new RedisSearchService(
+                model: $staff,
+                key: 'staff',
+                query: '',
+                searchableFields: ['name', 'email']
+            ))->updateItem($staff);
+        });
+
+        static::deleted(function ($staff) {
+            (new RedisSearchService(
+                model: $staff,
+                key: 'staff',
+                query: '',
+                searchableFields: ['name', 'email']
+            ))->deleteItem($staff);
+        });
     }
 
     public function role()

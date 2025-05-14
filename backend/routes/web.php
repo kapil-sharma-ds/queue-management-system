@@ -7,13 +7,10 @@ use App\Jobs\TestJob;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/test-job', function () {
-    dispatch(new TestJob);
-    return 'Dispatched';
-});
-
-Route::get('/staff/search', [StaffSearchController::class, 'showSearchForm']);
-Route::post('/staff/search', [StaffSearchController::class, 'search']);
+// Route::get('/test-job', function () {
+//     dispatch(new TestJob);
+//     return 'Dispatched';
+// });
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -29,6 +26,19 @@ Route::middleware('auth')->group(function () {
     })->name('datatables');
     Route::resource('services-offered', ServiceController::class);
     Route::get('counters', [CounterController::class, 'index'])->name('counter.index');
+
+    Route::prefix('staff')->group(function () {
+        Route::get('', [StaffSearchController::class, 'index'])->name('staff.index');
+        // Route::post('search', [StaffSearchController::class, 'search'])->name('staff.search.submit');
+        Route::get('/create', [StaffSearchController::class, 'create'])->name('staff.create');
+        Route::post('/', [StaffSearchController::class, 'store'])->name('staff.store');
+        Route::get('/view/{id}', [StaffSearchController::class, 'show'])->name('staff.show');
+        Route::get('/{id}/edit', [StaffSearchController::class, 'edit'])->name('staff.edit');
+        Route::put('/{id}', [StaffSearchController::class, 'update'])->name('staff.update');
+        Route::delete('/{id}', [StaffSearchController::class, 'destroy'])->name('staff.destroy');
+
+        Route::post('clear-cache', [StaffSearchController::class, 'clearStaffCache'])->name('staff.clearStaffCache');
+    });
 });
 
 require __DIR__.'/settings.php';

@@ -1,5 +1,5 @@
 <template>
-    <Head title="Services Offered" />
+    <Head title="Datatables" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
