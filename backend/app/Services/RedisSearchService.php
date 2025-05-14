@@ -52,32 +52,14 @@ class RedisSearchService
 
     public function storeItemInRedis(Model $item): void
     {
-        $key = $this->key . ':' . $item->getKey();
+        // Clear all cahche
+        $this->clearCache();
 
-        // Prepare the data to be stored (fields you want to store individually)
-        $data = ['id' => $item->id];
-        foreach ($this->searchableFields as $field) {
-            $data[$field] = $item->{$field};
-        }
-
-        // Store individual fields in the Redis hash
-        Redis::hset($key, ...collect($data)->flatMap(fn($v, $k) => [$k, $v])->toArray());
-
-        // Build a searchable display value from configured fields
-        $sortValue = Str::lower(
-            collect($this->searchableFields)
-                ->map(fn($field) => $item->{$field})
-                ->implode(' ')
-        ); // or any other sorting logic
-
-        // Add to sorted set
-        Redis::zadd($this->key . ':sorted', 0, json_encode([
-            'id' => $item->getKey(),
-            'text' => $sortValue,
-        ]));
+        // Re-create cache
+        $this->storeItems();
 
         Log::info('[RedisSearchController]: Created record in Redis', [
-            'data' => $data,
+            'data' => $item->toArray(),
         ]);
     }
 
