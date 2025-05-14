@@ -26,7 +26,7 @@ const mainNavItems: NavItem[] = [
     },
     {
         title: 'Staff',
-        href: '/staff/search',
+        href: '/staff',
         icon: HandCoins,
     },
     {
